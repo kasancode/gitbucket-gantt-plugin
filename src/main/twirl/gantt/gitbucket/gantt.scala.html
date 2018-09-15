@@ -1,0 +1,17 @@
+@(repository: gitbucket.core.service.RepositoryService.RepositoryInfo,
+issues: List[gitbucket.core.service.IssuesService.IssueInfo]
+)(implicit context: gitbucket.core.controller.Context)
+@import context._
+@import gitbucket.core.view.helpers._
+@gitbucket.core.html.main("GantChart", Some(repository)) {
+    @gitbucket.core.html.menu("gantt", repository) {
+        <div id="root"></div>
+        <h1>Gantt Chart</h1>
+        @for(issue <- issues){
+            <div>
+                <h2>@issue.issue.title</h2>
+                <span>@issue.issue.registeredDate</span>
+            </div>
+        }
+    }
+}
