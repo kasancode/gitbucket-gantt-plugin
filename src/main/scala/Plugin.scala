@@ -11,11 +11,12 @@ class Plugin extends gitbucket.core.plugin.Plugin {
   override val description: String = "GitBucket plug-in"
   override val versions: List[Version] = List(new Version("1.0.0"))
 
+
   override val controllers = Seq(
     "/*" -> new GanttChartController()
   )
 
   override val repositoryMenus = Seq(
-    (repositoryInfo: RepositoryInfo, context: Context) => Some(Link("gantt", "GanttChart", "/gantt", Some("circuit-board")))
+    (repositoryInfo: RepositoryInfo, context: Context) => Some(Link("gantt", "Gantt Chart", "/gantt/7", Some("tasklist")))
   )
 }

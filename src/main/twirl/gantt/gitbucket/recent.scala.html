@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+@(repository: gitbucket.core.service.RepositoryService.RepositoryInfo,
+milestones: List[(gitbucket.core.model.Milestone,Int,Int)],
+issues: List[gitbucket.core.model.Issue],
+comments: List[gitbucket.core.model.IssueComment]
+)(implicit context: gitbucket.core.controller.Context)
+@import context._
+@import gitbucket.core.view.helpers._
+@gitbucket.core.html.main("Recent", Some(repository)) {
+@gitbucket.core.html.menu("recent", repository) {
+<div id="root"></div>
+
+<h1>Gantt Chart</h1>
+
+@for(milestone <- milestones){
+<div>
+    <h2>@milestone._1.title</h2>
+    <div>@milestone._1.description</div>
+    <div>due date : @milestone._1.dueDate</div>
+    <div>closed date : @milestone._1.closedDate</div>
+    <div>open counts : @milestone._2</div>
+    <div>closed counts : @milestone._3</div>
+
+    @for(issue <- issues.filter(i => i.milestoneId.getOrElse(-1) == milestone._1.milestoneId)){
+    <div>
+        <h3>@issue.title</h3>
+        <span>@issue.registeredDate</span>
+        @for(comment <- comments.filter(c =>c.issueId.toInt == issue.issueId.toInt)){
+        <div>@comment.action</div>
+        <div>@comment.content</div>
+        }
+    </div>
+    }
+</div>
+}
+
+<div>
+    <h2>No Milestone</h2>
+    @for(issue <- issues.filter(i => i.milestoneId.isEmpty)){
+    <div>
+        <h3>@issue.title</h3>
+        <span>@issue.registeredDate</span>
+        @for(comment <- comments.filter(c =>c.issueId.toInt == issue.issueId.toInt)){
+        <div>@comment.action</div>
+        <div>@comment.content</div>
+        }
+    </div>
+    }
+</div>
+}
+}

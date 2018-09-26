@@ -1,7 +1,21 @@
-gitbucket-plugin-template [![Build Status](https://travis-ci.org/gitbucket/gitbucket-plugin-template.svg?branch=master)](https://travis-ci.org/gitbucket/gitbucket-plugin-template)
-========
-Template project for GitBucket plugin
+# gitbucket-gantt-plugin
 
-Run `sbt assembly` and copy generated `/target/scala-2.12/gitbucket-helloworld-plugin-assembly-1.0.0.jar` to `~/.gitbucket/plugins/` (If the directory does not exist, create it by hand before copying the jar), or just run `sbt install`.
+A [GitBucket](https://github.com/gitbucket/gitbucket) plugin rendering Gantt Chart.  
+The lines and points are based on Milestones, Iusses, Pull request and Comments.   
 
-Then start GitBucket and access to http://localhost:8080/helloworld in your web browser, you will see `Hello World!` response.
+![Screenshot](./doc/screenshot.png)
+
+
+## Installation
+
+Download jar file from [the release page](https://github.com/kasancode/gitbucket-gantt-plugin/releases) and put into `GITBUCKET_HOME/plugins`.
+
+## Version
+
+Plugin version|GitBucket version
+:---|:---
+1.0.0|4.26.x
+
+## Build from source
+
+`$ sbt package`

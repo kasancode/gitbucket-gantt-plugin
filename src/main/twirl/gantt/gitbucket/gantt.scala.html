@@ -1,17 +1,286 @@
 @(repository: gitbucket.core.service.RepositoryService.RepositoryInfo,
-issues: List[gitbucket.core.service.IssuesService.IssueInfo]
+milestones: List[(gitbucket.core.model.Milestone,Int,Int)],
+issues: List[gitbucket.core.model.Issue],
+comments: List[gitbucket.core.model.IssueComment],
+fromDate:java.util.Date,
+toDate:java.util.Date,
+timeSpan:Int
 )(implicit context: gitbucket.core.controller.Context)
 @import context._
 @import gitbucket.core.view.helpers._
-@gitbucket.core.html.main("GantChart", Some(repository)) {
-    @gitbucket.core.html.menu("gantt", repository) {
-        <div id="root"></div>
-        <h1>Gantt Chart</h1>
-        @for(issue <- issues){
-            <div>
-                <h2>@issue.issue.title</h2>
-                <span>@issue.issue.registeredDate</span>
-            </div>
+@import java.util.{Date,Calendar}
+@import gitbucket.core.model.{Issue,IssueComment}
+@import scala.collection.mutable.ListBuffer
+@import gitbucket.core.view.helpers
+@import io.github.gitbucket.ganttchart.view.ganttHelpers
+
+@height = @{26}
+@center = @{13}
+
+@getX(date: Date) = @{
+    val left = fromDate.getTime().asInstanceOf[Double]
+    val right = toDate.getTime().asInstanceOf[Double]
+    val current = date.getTime().asInstanceOf[Double]
+
+    (current - left) / (right - left) * 100
+}
+
+@getMaxX(issue: Issue) = @{
+    val date = comments
+        .filter(c =>c.issueId.toInt == issue.issueId.toInt) match{
+            case c:List[IssueComment] if c.length > 0 => c.last.registeredDate
+            case _ => issue.registeredDate
         }
+
+    getX(date)
+}
+
+@getPointSize(action: String = "message") = @{
+    action match{
+        case "change_milestone" => 2
+        case "refer" => 2
+        case "add_label" => 2
+        case "delete_label" => 2
+        case "change_priority" => 2
+        case "assign" => 2
+        case "close_comment" => 2
+        case "close" => 2
+
+        case "message" => 5
+        case "commit" => 5
+        case "merge" => 5
+        case _ => 5
     }
 }
+
+@isActive(span:Int) = @{
+    if(span == timeSpan)
+        "active"
+    else
+        ""
+}
+
+@displayIssue(issue: Issue, limit: Option[Date] = None) = {
+    <div class="row gantt-issue">
+        <div class="col-sm-3 gantt-issue-title">
+            <a class="issue-title-g" href="@ganttHelpers.createIssueUrl(repository, issue)">
+            @issue.title
+                <span class="muted">
+                    #@issue.issueId
+                </span>
+            </a>
+        </div>
+        <div class="col-sm-9 gantt-issue-bar">
+            <svg width="100%" height="@height" class="gantt-bar">
+                <line class="gantt-line" x1="@getX(issue.registeredDate)%" x2="@getMaxX(issue)%" y1="@center" y2="@center" />
+                @if(!issue.closed){
+                <line class="gantt-line-dot" x1="@getMaxX(issue)%" x2="@getX(new Date)%" y1="@center" y2="@center" />
+                }
+                @if(limit.isDefined){
+                <line class="gantt-limit" x1="@getX(limit.get)%" x2="@getX(limit.get)%" y1="0" y2="@height" />
+                }
+                <a xlink:href="@ganttHelpers.createIssueUrl(repository, issue)">
+                    <circle class="gantt-point message" cx="@getX(issue.registeredDate)%" cy="@center" r="@getPointSize()">
+                        <title>
+                            <div>@issue.title</div>
+                            <div>@issue.content</div>
+                        </title>
+                    </circle>
+                </a>
+                @for(comment <- comments.filter(c =>c.issueId.toInt == issue.issueId.toInt)){
+                <a xlink:href="@ganttHelpers.createCommentUrl(repository, issue, comment)">
+                    <circle class="gantt-point gantt-@comment.action" cx="@getX(comment.registeredDate)%" cy="@center" r="@getPointSize(comment.action)">
+                        <title>
+                            <div>@comment.action.replaceAll("_"," ")</div>
+                            <div>@comment.content</div>
+                        </title>
+                    </circle>
+                </a>
+                }
+            </svg>
+        </div>
+    </div>
+}
+
+@createTimeList() = @{
+    var list = ListBuffer.empty[Calendar]
+
+    var span = ((toDate.getTime() - fromDate.getTime())/ (1000 * 60 * 60 * 24 * 10)).asInstanceOf[Int]
+    span = math.max(span, 1)
+
+    var d =  Calendar.getInstance
+    var limit = Calendar.getInstance
+    limit.setTime(toDate)
+
+    d.setTime(fromDate)
+    d.set(d.get(Calendar.YEAR),d.get(Calendar.MONTH),d.get(Calendar.DATE),0,0,0)
+    while(d.before(limit)){
+        list += d.clone.asInstanceOf[Calendar]
+        d.add(Calendar.DATE, span)
+    }
+
+    list
+}
+
+@progress(open:Int, closed:Int) = @{
+    math.round(closed.asInstanceOf[Double] / (closed.asInstanceOf[Double] + open.asInstanceOf[Double]) * 100)
+}
+
+@createTimeLine() = {
+<div class="row gantt-time">
+    <div class="col-sm-3 gantt-time-title"></div>
+    <div class="col-sm-9 gantt-time-bar">
+        <svg width="100%" height="@height" class="gantt-bar gantt-bar-time">
+            @for(d <- createTimeList){
+                <text x="@getX(d.getTime)%" y="@(height-2)">@d.get(Calendar.DATE)</text>
+            }
+        </svg>
+    </div>
+</div>
+}
+
+@gitbucket.core.html.main("Gant Chart", Some(repository)) {
+    @gitbucket.core.html.menu("gantt", repository) {
+        <ul class="nav nav-tabs">
+            @for(s <- List(3, 7, 14, 30, 90)){
+            <li class="@isActive(s)">
+                <a href="@ganttHelpers.createGanttUrl(repository, s)">@s days</a>
+            </li>
+            }
+        </ul>
+
+        <div class="gantt-chart">
+            @for(milestone <- milestones){
+                <div class="row gantt-milestone">
+                    <div class="col-sm-12">
+                        <div class="gantt-milestone-title">
+                            <a class="milestone-title-g" href ="@ganttHelpers.createMilestoneUrl(repository, milestone._1.title)">
+                                @milestone._1.title
+                            </a>
+                        </div>
+                        @progress(milestone._2, milestone._3)%
+                        <span class="muted">completed </span>
+                        @milestone._2
+                        <span class="muted">open </span>
+                        @milestone._3
+                        <span class="muted">closed </span>
+                    </div>
+                </div>
+                @createTimeLine
+                @for(issue <- issues.filter(i => i.milestoneId.getOrElse(-1) == milestone._1.milestoneId)){
+                    @displayIssue(issue, milestone._1.dueDate)
+                }
+            }
+
+            @if(issues.count(i => i.milestoneId.isEmpty)>0){
+            <div class="row gantt-milestone">
+                <div class="col-sm-12 ">
+                    <div class="milestone-title-g">Issues with no milestones</div>
+                </div>
+            </div>
+            @createTimeLine
+            @for(issue <- issues.filter(i => i.milestoneId.isEmpty)){
+                @displayIssue(issue)
+            }
+        }
+        </div>
+    }
+}
+
+<script>
+    $(document).ready(function(){
+
+    $(".gantt-point").css({
+    	"stroke":"green",
+        "fill":"white",
+        "stroke-width":"2"
+    });
+
+    $(".gantt-message").css({
+    	"stroke":"green",
+    });
+
+    $(".gantt-change_milestone,.gantt-refer,.gantt-add_label,.gantt-delete_label,.gantt-change_priority,.gantt-assign").css({
+    	"stroke":"gray",
+        "fill":"gray",
+    });
+
+    $(".gantt-commit").css({
+    	"stroke":"orange",
+    });
+
+    $(".gantt-merge").css({
+    	"stroke":"blue",
+    });
+
+    $(".gantt-close_comment,.gantt-close").css({
+    	"stroke":"red",
+    	"fill":"red",
+    });
+
+    $(".gantt-limit").css({
+    	"stroke":"red",
+        "stroke-width":"1"
+    });
+
+    $(".gantt-line").css({
+    	"stroke":"green",
+        "stroke-width":"1.5"
+    });
+
+    $(".gantt-line-dot").css({
+    	"stroke":"green",
+        "stroke-width":"1",
+        "stroke-dasharray": "3"
+    });
+
+    $(".gantt-chart").css({
+        "border-bottom":"solid 1px silver",
+    });
+
+    $(".gantt-bar").css({
+        "vertical-align":"middle"
+    });
+
+    $(".gantt-milestone").css({
+        "border-top":"solid 1px silver",
+        "background-color":"#f5f5f5",
+    });
+
+    $(".gantt-issue-title").css({
+        "border-top":"solid 1px white",
+        "background-color":"#f5f5f5",
+        "min-height":"26px"
+    });
+
+    $(".gantt-issue-bar").css({
+        "border-top":"solid 1px #f5f5f5"
+    });
+
+    $(".gantt-time").css({
+        "background-color":"#f5f5f5"
+    });
+
+    $(".issue-title-g").css({
+        "color":"#333",
+        "font-size":"100%"
+    });
+
+    $(".milestone-title-g").css({
+        "color":"#333",
+        "font-size":"180%"
+    });
+
+  	$("circle.gantt-point").map(function(i,elem){
+    	var $title = $(elem).children("title");
+
+    	$(elem).tooltip({
+          title: $title.html(),
+          html: true,
+          placement: 'top',
+          container: 'body'
+        });
+        $title.remove();
+     });
+  });
+</script>
