@@ -1,7 +1,7 @@
 # gitbucket-gantt-plugin
 
 A [GitBucket](https://github.com/gitbucket/gitbucket) plugin rendering Gantt Chart.  
-The lines and points are based on Milestones, Iusses, Pull request and Comments.   
+The lines and points are based on Milestones, Iusses, Pull requests, Comments, and Commit linked to the Issue.   
 
 ![Screenshot](./doc/screenshot.png)
 
