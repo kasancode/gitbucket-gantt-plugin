@@ -1,0 +1,114 @@
+
+.gantt-point{
+    stroke:green;
+    fill:white;
+    stroke-width:2
+}
+
+.gantt-message{
+	stroke:green;
+}
+
+.gantt-change_milestone,
+.gantt-refer,
+.gantt-add_label,
+.gantt-delete_label,
+.gantt-change_priority,
+.gantt-assign{
+	stroke:gray;
+	fill:gray;
+}
+
+.gantt-commit{
+	stroke:orange;
+}
+
+.gantt-merge{
+	stroke:blue;
+}
+
+.gantt-close_comment,
+.gantt-close{
+	stroke:red;
+	fill:red;
+}
+
+.gantt-limit{
+	stroke:red;
+	stroke-width:1;
+}
+
+.gantt-line{
+	stroke:green;
+	stroke-width:1.5;
+}
+
+.gantt-line-dot{
+	stroke:green;
+	stroke-width:1;
+	stroke-dasharray:3;
+}
+
+.gantt-chart{
+	border-bottom:solid 1px silver;
+}
+
+.gantt-bar{
+	vertical-align:middle;
+}
+
+.gantt-milestone{
+	border-top:solid 1px silver;
+	background-color:#f5f5f5;
+}
+
+.gantt-issue-title{
+	border-top:solid 1px white;
+	background-color:#f5f5f5;
+	min-height:26px;
+}
+
+.gantt-issue-bar{
+	border-top:solid 1px #f5f5f5;
+}
+
+.gantt-time{
+	background-color:#f5f5f5;
+}
+
+.gantt-tip-title{
+	font-size:120%;
+}
+
+.issue-title-g{
+	color:#333;
+	font-size:100%;
+}
+
+.milestone-title-g{
+	color:#333;
+	font-size:180%;
+}
+
+#gantt-tooltip {
+  position:absolute;
+  display:none;
+  background-color:black;
+  color:white;
+  padding:10px;
+  border-radius:5px;
+}
+
+#gantt-tooltip:after{
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -9px;
+  left: 0;
+  width: 0;
+  height: 0;
+  margin: auto;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+  border-width: 10px 10px 0px 10px;
+}

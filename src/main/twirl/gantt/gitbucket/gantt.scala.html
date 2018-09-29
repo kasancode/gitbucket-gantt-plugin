@@ -72,18 +72,18 @@ timeSpan:Int
         </div>
         <div class="col-sm-9 gantt-issue-bar">
             <svg width="100%" height="@height" class="gantt-bar">
-                <line class="gantt-line" x1="@getX(issue.registeredDate)%" x2="@getMaxX(issue)%" y1="@center" y2="@center" />
+                <line class="gantt-line" x1="@getX(issue.registeredDate)%" x2="@getMaxX(issue)%" y1="@center" y2="@center"></line>
                 @if(!issue.closed){
-                <line class="gantt-line-dot" x1="@getMaxX(issue)%" x2="@getX(new Date)%" y1="@center" y2="@center" />
+                <line class="gantt-line-dot" x1="@getMaxX(issue)%" x2="@getX(new Date)%" y1="@center" y2="@center"></line>
                 }
                 @if(limit.isDefined){
-                <line class="gantt-limit" x1="@getX(limit.get)%" x2="@getX(limit.get)%" y1="0" y2="@height" />
+                <line class="gantt-limit" x1="@getX(limit.get)%" x2="@getX(limit.get)%" y1="0" y2="@height"></line>
                 }
                 <a xlink:href="@ganttHelpers.createIssueUrl(repository, issue)">
                     <circle class="gantt-point message" cx="@getX(issue.registeredDate)%" cy="@center" r="@getPointSize()">
                         <title>
-                            <div>@issue.title</div>
-                            <div>@issue.content</div>
+                            <div class="gantt-tip-title">@issue.title</div>
+                            <div class="gantt-tip-content">@issue.content</div>
                         </title>
                     </circle>
                 </a>
@@ -91,8 +91,8 @@ timeSpan:Int
                 <a xlink:href="@ganttHelpers.createCommentUrl(repository, issue, comment)">
                     <circle class="gantt-point gantt-@comment.action" cx="@getX(comment.registeredDate)%" cy="@center" r="@getPointSize(comment.action)">
                         <title>
-                            <div>@comment.action.replaceAll("_"," ")</div>
-                            <div>@comment.content</div>
+                            <div class="gantt-tip-title">@comment.action.replaceAll("_"," ")</div>
+                            <div class="gantt-tip-content">@comment.content</div>
                         </title>
                     </circle>
                 </a>
@@ -141,6 +141,18 @@ timeSpan:Int
 
 @gitbucket.core.html.main("Gant Chart", Some(repository)) {
     @gitbucket.core.html.menu("gantt", repository) {
+        <script>
+            var cssPath = "@context.path/plugin-assets/gantt/plugin-gantt.css";
+
+            $("<link />")
+                .attr("rel","stylesheet")
+                .attr("type","text/css")
+                .attr("href",cssPath)
+                .appendTo("head");
+        </script>
+        <script src="@context.path/plugin-assets/gantt/plugin-gantt.js"></script>
+
+
         <ul class="nav nav-tabs">
             @for(s <- List(3, 7, 14, 30, 90)){
             <li class="@isActive(s)">
@@ -187,100 +199,4 @@ timeSpan:Int
     }
 }
 
-<script>
-    $(document).ready(function(){
 
-    $(".gantt-point").css({
-    	"stroke":"green",
-        "fill":"white",
-        "stroke-width":"2"
-    });
-
-    $(".gantt-message").css({
-    	"stroke":"green",
-    });
-
-    $(".gantt-change_milestone,.gantt-refer,.gantt-add_label,.gantt-delete_label,.gantt-change_priority,.gantt-assign").css({
-    	"stroke":"gray",
-        "fill":"gray",
-    });
-
-    $(".gantt-commit").css({
-    	"stroke":"orange",
-    });
-
-    $(".gantt-merge").css({
-    	"stroke":"blue",
-    });
-
-    $(".gantt-close_comment,.gantt-close").css({
-    	"stroke":"red",
-    	"fill":"red",
-    });
-
-    $(".gantt-limit").css({
-    	"stroke":"red",
-        "stroke-width":"1"
-    });
-
-    $(".gantt-line").css({
-    	"stroke":"green",
-        "stroke-width":"1.5"
-    });
-
-    $(".gantt-line-dot").css({
-    	"stroke":"green",
-        "stroke-width":"1",
-        "stroke-dasharray": "3"
-    });
-
-    $(".gantt-chart").css({
-        "border-bottom":"solid 1px silver",
-    });
-
-    $(".gantt-bar").css({
-        "vertical-align":"middle"
-    });
-
-    $(".gantt-milestone").css({
-        "border-top":"solid 1px silver",
-        "background-color":"#f5f5f5",
-    });
-
-    $(".gantt-issue-title").css({
-        "border-top":"solid 1px white",
-        "background-color":"#f5f5f5",
-        "min-height":"26px"
-    });
-
-    $(".gantt-issue-bar").css({
-        "border-top":"solid 1px #f5f5f5"
-    });
-
-    $(".gantt-time").css({
-        "background-color":"#f5f5f5"
-    });
-
-    $(".issue-title-g").css({
-        "color":"#333",
-        "font-size":"100%"
-    });
-
-    $(".milestone-title-g").css({
-        "color":"#333",
-        "font-size":"180%"
-    });
-
-  	$("circle.gantt-point").map(function(i,elem){
-    	var $title = $(elem).children("title");
-
-    	$(elem).tooltip({
-          title: $title.html(),
-          html: true,
-          placement: 'top',
-          container: 'body'
-        });
-        $title.remove();
-     });
-  });
-</script>

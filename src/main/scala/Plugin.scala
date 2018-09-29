@@ -16,6 +16,8 @@ class Plugin extends gitbucket.core.plugin.Plugin {
     "/*" -> new GanttChartController()
   )
 
+  override val assetsMappings = Seq("/gantt" -> "/plugins/gantt/assets")
+
   override val repositoryMenus = Seq(
     (repositoryInfo: RepositoryInfo, context: Context) => Some(Link("gantt", "Gantt Chart", "/gantt/7", Some("tasklist")))
   )
