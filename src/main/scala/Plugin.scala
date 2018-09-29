@@ -9,7 +9,10 @@ class Plugin extends gitbucket.core.plugin.Plugin {
   override val pluginId: String = "ganttchart"
   override val pluginName: String = "Gantt Chart Plugin"
   override val description: String = "GitBucket plug-in"
-  override val versions: List[Version] = List(new Version("1.0.0"))
+  override val versions: List[Version] = List(
+    new Version("1.0.0"),
+    new Version("1.0.1"),
+  )
 
 
   override val controllers = Seq(
