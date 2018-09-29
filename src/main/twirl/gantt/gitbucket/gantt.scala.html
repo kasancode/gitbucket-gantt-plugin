@@ -102,11 +102,16 @@ timeSpan:Int
     </div>
 }
 
+@getSpan() = @{
+    math.max(
+        ((toDate.getTime() - fromDate.getTime())/ (1000 * 60 * 60 * 24 * 10)).asInstanceOf[Int],
+        1)
+}
+
 @createTimeList() = @{
     var list = ListBuffer.empty[Calendar]
 
-    var span = ((toDate.getTime() - fromDate.getTime())/ (1000 * 60 * 60 * 24 * 10)).asInstanceOf[Int]
-    span = math.max(span, 1)
+    val span = getSpan
 
     var d =  Calendar.getInstance
     var limit = Calendar.getInstance
@@ -132,6 +137,9 @@ timeSpan:Int
     <div class="col-sm-9 gantt-time-bar">
         <svg width="100%" height="@height" class="gantt-bar gantt-bar-time">
             @for(d <- createTimeList){
+                @if(d.get(Calendar.DATE) <= getSpan){
+                <text x="@getX(d.getTime)%" y="@(center-2)">@(d.get(Calendar.MONTH)+1)</text>
+                }
                 <text x="@getX(d.getTime)%" y="@(height-2)">@d.get(Calendar.DATE)</text>
             }
         </svg>
@@ -151,7 +159,6 @@ timeSpan:Int
                 .appendTo("head");
         </script>
         <script src="@context.path/plugin-assets/gantt/plugin-gantt.js"></script>
-
 
         <ul class="nav nav-tabs">
             @for(s <- List(3, 7, 14, 30, 90)){
