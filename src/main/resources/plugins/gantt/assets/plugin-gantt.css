@@ -77,7 +77,11 @@
 }
 
 .gantt-tip-title{
-	font-size:120%;
+	font-size:100%;
+}
+
+.gantt-tip-content{
+	font-size:90%;
 }
 
 .issue-title-g{
