@@ -89,6 +89,8 @@
 
 .gantt-tip-content{
 	font-size:90%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .issue-title-g{
@@ -109,8 +111,6 @@
   padding:10px;
   border-radius:5px;
   max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 #gantt-tooltip:after{
