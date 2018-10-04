@@ -5,7 +5,11 @@
     stroke-width:2
 }
 
-.gantt-message{
+.gantt-open{
+	stroke:green;
+}
+
+.gantt-comment{
 	stroke:green;
 }
 
@@ -71,6 +75,9 @@
 .gantt-issue-bar{
 	border-top:solid 1px #f5f5f5;
 }
+.gantt-issue-bar:hover{
+	background-color:#f5f5f5;
+}
 
 .gantt-time{
 	background-color:#f5f5f5;
@@ -101,6 +108,9 @@
   color:white;
   padding:10px;
   border-radius:5px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #gantt-tooltip:after{

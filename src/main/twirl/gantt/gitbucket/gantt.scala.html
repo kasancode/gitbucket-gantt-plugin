@@ -37,14 +37,15 @@ timeSpan:Int
 
 @getPointSize(action: String = "message") = @{
     action match{
-        case "change_milestone" => 2
-        case "refer" => 2
-        case "add_label" => 2
-        case "delete_label" => 2
-        case "change_priority" => 2
-        case "assign" => 2
-        case "close_comment" => 2
-        case "close" => 2
+        case "change_milestone" => 1.5
+        case "refer" => 1.5
+        case "add_label" => 1.5
+        case "delete_label" => 1.5
+        case "change_priority" => 1.5
+        case "assign" => 1.5
+
+        case "close_comment" => 3
+        case "close" => 3
 
         case "message" => 5
         case "commit" => 5
@@ -80,7 +81,7 @@ timeSpan:Int
                 <line class="gantt-limit" x1="@getX(limit.get)%" x2="@getX(limit.get)%" y1="0" y2="@height"></line>
                 }
                 <a xlink:href="@ganttHelpers.createIssueUrl(repository, issue)">
-                    <circle class="gantt-point message" cx="@getX(issue.registeredDate)%" cy="@center" r="@getPointSize()">
+                    <circle class="gantt-point gantt-comment" cx="@getX(issue.registeredDate)%" cy="@center" r="@getPointSize()">
                         <title>
                             <div class="gantt-tip-title">@ganttHelpers.escapeHtml(issue.title)</div>
                             <div class="gantt-tip-content">@ganttHelpers.escapeHtml(issue.content)</div>
