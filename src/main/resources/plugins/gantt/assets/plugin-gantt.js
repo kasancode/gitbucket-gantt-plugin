@@ -24,6 +24,9 @@ $(document).ready(function(){
                     return $point.attr("data-gantt-tooltip");
                 }();
 
+                if(!data)
+                    return;
+
                 var $tip = getTip().html(data);
 
                 var rect = $point[0].getBoundingClientRect();
