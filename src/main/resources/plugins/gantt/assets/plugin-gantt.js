@@ -32,7 +32,7 @@ $(document).ready(function () {
                     rect.height = rect.bottom - rect.top;
                 }
 
-                pos.top -= $tip.height() + rect.height / 2 + 30;
+                pos.top -= $tip.height() + 30;
                 pos.left -= $tip.width() / 2 - rect.width / 2 + 10;
 
                 $tip.css(pos).fadeIn(10);
@@ -44,9 +44,7 @@ $(document).ready(function () {
                 if ($tip.css("display") === "none")
                     return;
 
-                $tip.fadeOut(10, function () {
-                    shownTooltip = false;
-                });
+                $tip.fadeOut(10);
             }
         }
     );
