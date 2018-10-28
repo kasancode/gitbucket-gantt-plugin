@@ -83,8 +83,8 @@ timeSpan:Int
                 <a xlink:href="@ganttHelpers.createIssueUrl(repository, issue)">
                     <circle class="gantt-point gantt-comment" cx="@getX(issue.registeredDate)%" cy="@center" r="@getPointSize()">
                         <title>
-                            <div class="gantt-tip-title">@ganttHelpers.escapeHtml(issue.title)</div>
-                            <div class="gantt-tip-content">@ganttHelpers.escapeHtml(issue.content)</div>
+                            <div class="gantt-tip-title">@issue.title</div>
+                            <div class="gantt-tip-content">@issue.content</div>
                         </title>
                     </circle>
                 </a>
@@ -93,7 +93,7 @@ timeSpan:Int
                     <circle class="gantt-point gantt-@comment.action" cx="@getX(comment.registeredDate)%" cy="@center" r="@getPointSize(comment.action)">
                         <title>
                             <div class="gantt-tip-title">@comment.action.replaceAll("_"," ")</div>
-                            <div class="gantt-tip-content">@ganttHelpers.escapeHtml(comment.content)</div>
+                            <div class="gantt-tip-content">@comment.content</div>
                         </title>
                     </circle>
                 </a>
@@ -175,7 +175,7 @@ timeSpan:Int
                     <div class="col-sm-12">
                         <div class="gantt-milestone-title">
                             <a class="milestone-title-g" href ="@ganttHelpers.createMilestoneUrl(repository, milestone._1.title)">
-                                @ganttHelpers.escapeHtml(milestone._1.title)
+                                @milestone._1.title
                             </a>
                         </div>
                         @progress(milestone._2, milestone._3)%
