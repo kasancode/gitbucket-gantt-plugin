@@ -15,6 +15,7 @@ class Plugin extends gitbucket.core.plugin.Plugin {
     new Version("1.0.2"),
     new Version("1.0.3"),
     new Version("1.1.0"),
+    new Version("1.2.0"),
   )
 
 
