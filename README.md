@@ -1,5 +1,5 @@
 # gitbucket-gantt-plugin
-[![Build Status](https://travis-ci.org/kasancode/gitbucket-gantt-plugin.svg?branch=master)](https://travis-ci.org/kasancode/gitbucket-gantt-plugin)
+[![Scala CI](https://github.com/kasancode/gitbucket-gantt-plugin/actions/workflows/scala.yml/badge.svg)](https://github.com/kasancode/gitbucket-gantt-plugin/actions/workflows/scala.yml)
 
 A [GitBucket](https://github.com/gitbucket/gitbucket) plugin rendering Gantt Chart.  
 The lines and points are based on Milestones, Iusses, Pull requests, Comments, and Commit linked to the Issue.   
